@@ -4,6 +4,8 @@ import dotenv from "dotenv";
 import cors from "cors";
 import connectDB from "./config/db.js";
 
+import userRoutes from "./routes/userRoutes.js";
+
 dotenv.config();
 
 const app = express();
@@ -11,6 +13,8 @@ const app = express();
 connectDB();
 app.use(cors());
 app.use(express.json());
+
+app.use("/users", userRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
