@@ -5,6 +5,7 @@ import cors from "cors";
 import connectDB from "./config/db.js";
 
 import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
 
 dotenv.config();
 
@@ -15,6 +16,7 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
