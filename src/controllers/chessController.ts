@@ -24,9 +24,13 @@ const getChessMatch = async (req: Request, res: Response) => {
   }
 };
 
-const createChessMatch = async (req: Request, res: Response) => {
+const createChessMatch = async (req: any, res: Response) => {
   try {
-    const chessMatch = await Chess.create(req.body);
+    const userId = req.user.id;
+    const chessMatch = await Chess.create({
+      ...req.body,
+      whitePlayer: userId,
+    });
     res.status(201).json(chessMatch);
   } catch (error) {
     res.status(500).json({ message: "Error creating match" });

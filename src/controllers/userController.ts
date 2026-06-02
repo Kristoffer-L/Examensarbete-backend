@@ -2,9 +2,22 @@ import type { Request, Response } from "express";
 import User from "../models/userModel.js";
 import Chess from "../models/chessModel.js";
 
-const getAllUsers = async (req: Request, res: Response) => {
+const getAllUsers = async (req: any, res: Response) => {
   try {
-    const users = await User.find();
+    const currentUserId = req.user.id;
+    const users = await User.find({});
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching users" });
+  }
+};
+
+const getAllOtherUsers = async (req: any, res: Response) => {
+  try {
+    const currentUserId = req.user.id;
+    const users = await User.find({
+      _id: { $ne: currentUserId },
+    });
     res.json(users);
   } catch (error) {
     res.status(500).json({ message: "Error fetching users" });
@@ -54,4 +67,4 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUsers, getUser, createUser, deleteUser };
+export { getAllUsers, getAllOtherUsers, getUser, createUser, deleteUser };
