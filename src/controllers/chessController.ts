@@ -12,7 +12,9 @@ const getAllChessMatches = async (req: Request, res: Response) => {
 
 const getChessMatch = async (req: Request, res: Response) => {
   try {
-    const chessMatch = await Chess.findById(req.params.id);
+    const chessMatch = await Chess.findById(req.params.id)
+      .populate("whitePlayer", "name email")
+      .populate("blackPlayer", "name email");
     if (!chessMatch) {
       return res.status(404).json({ message: "Chess match not found" });
     }
@@ -28,6 +30,17 @@ const createChessMatch = async (req: Request, res: Response) => {
     res.status(201).json(chessMatch);
   } catch (error) {
     res.status(500).json({ message: "Error creating match" });
+  }
+};
+
+const updateChessMatch = async (req: Request, res: Response) => {
+  try {
+    const chessMatch = await Chess.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    res.json(chessMatch);
+  } catch (error) {
+    res.status(500).json({ message: "Error updating match" });
   }
 };
 
@@ -47,5 +60,6 @@ export {
   getAllChessMatches,
   getChessMatch,
   createChessMatch,
+  updateChessMatch,
   deleteChessMatch,
 };
