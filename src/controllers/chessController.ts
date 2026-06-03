@@ -1,5 +1,6 @@
 import type { Request, Response } from "express";
 import Chess from "../models/chessModel.js";
+import User from "../models/userModel.js";
 
 const getAllChessMatches = async (req: Request, res: Response) => {
   try {
@@ -10,15 +11,17 @@ const getAllChessMatches = async (req: Request, res: Response) => {
   }
 };
 
-const getChessMatch = async (req: Request, res: Response) => {
+const getChessMatch = async (req: any, res: Response) => {
   try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
     const chessMatch = await Chess.findById(req.params.id)
       .populate("whitePlayer", "name email")
       .populate("blackPlayer", "name email");
     if (!chessMatch) {
       return res.status(404).json({ message: "Chess match not found" });
     }
-    res.json(chessMatch);
+    res.json({ chessMatch, user });
   } catch (error) {
     res.status(500).json({ message: "Error fetching match" });
   }

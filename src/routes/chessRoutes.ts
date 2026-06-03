@@ -10,7 +10,7 @@ import { authMiddleware } from "../middleware/authMiddleware.js";
 const chessRoutes = Router();
 
 chessRoutes.get("/", getAllChessMatches);
-chessRoutes.get("/:id", getChessMatch);
+chessRoutes.get("/:id", authMiddleware, getChessMatch);
 chessRoutes.post("/", authMiddleware, createChessMatch);
 chessRoutes.patch("/:id", updateChessMatch);
 chessRoutes.delete("/", deleteChessMatch);

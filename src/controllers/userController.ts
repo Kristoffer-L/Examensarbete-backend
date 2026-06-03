@@ -4,7 +4,6 @@ import Chess from "../models/chessModel.js";
 
 const getAllUsers = async (req: any, res: Response) => {
   try {
-    const currentUserId = req.user.id;
     const users = await User.find({});
     res.json(users);
   } catch (error) {
