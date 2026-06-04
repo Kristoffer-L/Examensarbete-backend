@@ -18,17 +18,15 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-app.use(
-  cors({
-    origin: [
-      "http://localhost:5173",
-      "https://examensarbete-frontend.vercel.app",
-    ],
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    credentials: true,
-  }),
-);
-app.options("*", cors());
+const io = new Server(httpServer, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+  },
+});
+
+connectDB();
+app.use(cors());
 app.use(express.json());
 
 app.use("/users", userRoutes);
@@ -39,31 +37,14 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://examensarbete-frontend.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-
 chessSocketHandler(io);
 
 const port = process.env.PORT || 3000;
 
-const startServer = async () => {
-  try {
-    await connectDB();
+httpServer.listen(port, () => {
+  console.log(`Server listening on port ${port}`);
+});
 
-    httpServer.listen(port, () => {
-      console.log(`Server listening on port ${port}`);
-    });
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-startServer();
+app.listen(port, () => {
+  console.log(`Example app listening on port ${port}`);
+});
