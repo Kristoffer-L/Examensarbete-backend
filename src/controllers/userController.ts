@@ -2,6 +2,16 @@ import type { Request, Response } from "express";
 import User from "../models/userModel.js";
 import Chess from "../models/chessModel.js";
 
+const createUser = async (req: Request, res: Response) => {
+  try {
+    const user = new User(req.body);
+    await user.save();
+    res.status(201).json(user);
+  } catch (error) {
+    res.status(400).json({ message: "Error creating user" });
+  }
+};
+
 const getAllUsers = async (req: any, res: Response) => {
   try {
     const users = await User.find({});
@@ -11,11 +21,21 @@ const getAllUsers = async (req: any, res: Response) => {
   }
 };
 
+const getUser = async (req: any, res: Response) => {
+  try {
+    const UserId = req.user.id;
+    const user = await User.findById(UserId);
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ message: "Error fetching user" });
+  }
+};
+
 const getAllOtherUsers = async (req: any, res: Response) => {
   try {
-    const currentUserId = req.user.id;
+    const UserId = req.user.id;
     const users = await User.find({
-      _id: { $ne: currentUserId },
+      _id: { $ne: UserId },
     });
     res.json(users);
   } catch (error) {
@@ -23,7 +43,7 @@ const getAllOtherUsers = async (req: any, res: Response) => {
   }
 };
 
-const getUser = async (req: any, res: Response) => {
+const getUserAndMatches = async (req: any, res: Response) => {
   try {
     const userId = req.user.id;
     const user = await User.findById(userId);
@@ -33,24 +53,13 @@ const getUser = async (req: any, res: Response) => {
 
     const matches = await Chess.find({
       $or: [{ whitePlayer: userId }, { blackPlayer: userId }],
-    });
+    })
+      .populate("whitePlayer", "name email")
+      .populate("blackPlayer", "name email");
 
-    res.json({
-      user,
-      matches,
-    });
+    res.json({ user, matches });
   } catch (error) {
     res.status(500).json({ message: "Error fetching user" });
-  }
-};
-
-const createUser = async (req: Request, res: Response) => {
-  try {
-    const user = new User(req.body);
-    await user.save();
-    res.status(201).json(user);
-  } catch (error) {
-    res.status(400).json({ message: "Error creating user" });
   }
 };
 
@@ -66,4 +75,11 @@ const deleteUser = async (req: Request, res: Response) => {
   }
 };
 
-export { getAllUsers, getAllOtherUsers, getUser, createUser, deleteUser };
+export {
+  getAllUsers,
+  getUser,
+  getAllOtherUsers,
+  getUserAndMatches,
+  createUser,
+  deleteUser,
+};
