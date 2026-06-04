@@ -18,8 +18,6 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-connectDB();
-
 app.use(
   cors({
     origin: [
@@ -30,6 +28,7 @@ app.use(
     credentials: true,
   }),
 );
+app.options("*", cors());
 app.use(express.json());
 
 app.use("/users", userRoutes);
@@ -55,6 +54,16 @@ chessSocketHandler(io);
 
 const port = process.env.PORT || 3000;
 
-httpServer.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
-});
+const startServer = async () => {
+  try {
+    await connectDB();
+
+    httpServer.listen(port, () => {
+      console.log(`Server listening on port ${port}`);
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
+
+startServer();
