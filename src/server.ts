@@ -18,16 +18,6 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-const io = new Server(httpServer, {
-  cors: {
-    origin: [
-      "http://localhost:5173",
-      "https://examensarbete-frontend.vercel.app",
-    ],
-    methods: ["GET", "POST"],
-  },
-});
-
 connectDB();
 
 app.use(
@@ -48,6 +38,17 @@ app.use("/chess", chessRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
+});
+
+const io = new Server(httpServer, {
+  cors: {
+    origin: [
+      "http://localhost:5173",
+      "https://examensarbete-frontend.vercel.app",
+    ],
+    methods: ["GET", "POST"],
+    credentials: true,
+  },
 });
 
 chessSocketHandler(io);
