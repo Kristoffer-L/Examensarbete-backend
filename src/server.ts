@@ -20,13 +20,18 @@ const httpServer = createServer(app);
 
 const io = new Server(httpServer, {
   cors: {
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST"],
+    origin: "https://examensarbete-frontend.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
 
 connectDB();
-app.use(cors());
+app.use(
+  cors({
+    origin: "https://examensarbete-frontend.vercel.app",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+  }),
+);
 app.use(express.json());
 
 app.use("/users", userRoutes);
@@ -43,8 +48,4 @@ const port = process.env.PORT || 3000;
 
 httpServer.listen(port, () => {
   console.log(`Server listening on port ${port}`);
-});
-
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
 });
