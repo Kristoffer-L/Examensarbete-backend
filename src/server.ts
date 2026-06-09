@@ -18,22 +18,25 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
+// const CLIENT_URL = "http://localhost:5173";
+
+const CLIENT_URL = "https://examensarbete-frontend.vercel.app";
+
 const io = new Server(httpServer, {
   cors: {
-    origin: "https://examensarbete-frontend.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: CLIENT_URL,
+    credentials: true,
   },
 });
 
-connectDB();
+app.use(express.json());
+
 app.use(
   cors({
-    origin: "https://examensarbete-frontend.vercel.app",
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
+    origin: CLIENT_URL,
+    credentials: true,
   }),
 );
-app.use(express.json());
 
 app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
@@ -43,6 +46,7 @@ app.get("/", (req: Request, res: Response) => {
   res.send("Hello World!");
 });
 
+connectDB();
 chessSocketHandler(io);
 
 const port = process.env.PORT || 3000;
