@@ -18,8 +18,6 @@ dotenv.config();
 const app = express();
 const httpServer = createServer(app);
 
-// const CLIENT_URL = "http://localhost:5173";
-
 const CLIENT_URL = "https://examensarbete-frontend.vercel.app";
 
 const io = new Server(httpServer, {
