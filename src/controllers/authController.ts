@@ -44,10 +44,16 @@ const signIn = async (req: Request, res: Response) => {
         email: user.email,
       },
     });
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message,
-    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 
@@ -75,10 +81,16 @@ const signUp = async (req: Request, res: Response) => {
       message: "User registered successfully",
       userId: user._id,
     });
-  } catch (error: any) {
-    res.status(500).json({
-      message: error.message,
-    });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 

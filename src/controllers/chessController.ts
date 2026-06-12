@@ -1,4 +1,6 @@
 import type { Request, Response } from "express";
+import type { AuthRequest, AuthParamsRequest } from "../types/AuthRequest.js";
+
 import Chess from "../models/chessModel.js";
 import User from "../models/userModel.js";
 
@@ -6,37 +8,61 @@ const getAllChessMatches = async (req: Request, res: Response) => {
   try {
     const chessMatches = await Chess.find();
     res.json(chessMatches);
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching matches" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 
-const getChessMatch = async (req: any, res: Response) => {
+const getChessMatch = async (req: AuthParamsRequest, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user!.id;
     const user = await User.findById(userId);
     const chessMatch = await Chess.findById(req.params.id)
-      .populate("whitePlayer", "name email")
-      .populate("blackPlayer", "name email");
+      .populate("white", "name email")
+      .populate("black", "name email");
     if (!chessMatch) {
       return res.status(404).json({ message: "Chess match not found" });
     }
     res.json({ chessMatch, user });
-  } catch (error) {
-    res.status(500).json({ message: "Error fetching match" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 
-const createChessMatch = async (req: any, res: Response) => {
+const createChessMatch = async (req: AuthRequest, res: Response) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user!.id;
     const chessMatch = await Chess.create({
       ...req.body,
-      whitePlayer: userId,
+      white: userId,
     });
     res.status(201).json(chessMatch);
-  } catch (error) {
-    res.status(500).json({ message: "Error creating match" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 
@@ -46,8 +72,16 @@ const updateChessMatch = async (req: Request, res: Response) => {
       new: true,
     });
     res.json(chessMatch);
-  } catch (error) {
-    res.status(500).json({ message: "Error updating match" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 
@@ -58,8 +92,16 @@ const deleteChessMatch = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Chess match not found" });
     }
     res.json({ message: "Chess match deleted successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Error deleting chess match" });
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(500).json({
+        message: error.message,
+      });
+    } else {
+      res.status(500).json({
+        message: "Unknown error",
+      });
+    }
   }
 };
 

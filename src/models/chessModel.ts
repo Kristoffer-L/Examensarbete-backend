@@ -3,8 +3,8 @@ import mongoose from "mongoose";
 export interface IChess extends Document {
   _id: mongoose.Types.ObjectId;
   fen: string;
-  whitePlayer: mongoose.Types.ObjectId;
-  blackPlayer: mongoose.Types.ObjectId;
+  white: mongoose.Types.ObjectId;
+  black: mongoose.Types.ObjectId;
   winner: mongoose.Types.ObjectId | null;
   result: "white" | "black" | "draw" | null;
   status: "pending" | "active" | "finished";
@@ -17,12 +17,12 @@ const chessSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  whitePlayer: {
+  white: {
     type: mongoose.Types.ObjectId,
     ref: "User",
     required: true,
   },
-  blackPlayer: {
+  black: {
     type: mongoose.Types.ObjectId,
     ref: "User",
     required: true,
