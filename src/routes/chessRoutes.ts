@@ -13,6 +13,6 @@ chessRoutes.get("/", getAllChessMatches);
 chessRoutes.get("/:id", authMiddleware, getChessMatch);
 chessRoutes.post("/", authMiddleware, createChessMatch);
 chessRoutes.patch("/:id", updateChessMatch);
-chessRoutes.delete("/", deleteChessMatch);
+chessRoutes.delete("/:id", deleteChessMatch);
 
 export default chessRoutes;
